@@ -3,27 +3,54 @@ import 'package:flutter3/models/product.dart';
 import 'package:flutter3/pages/product_page.dart';
 
 class ProductItem extends StatelessWidget {
-  const ProductItem({super.key, required this.product});
+  final bool liked;
+  final Function() onFavoriteToggle;
+  const ProductItem(
+      {super.key,
+        required this.product,
+        required this.liked,
+        required this.onFavoriteToggle});
   final Product product;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (ctx) => ProductPage(product: product,))),
+          context,
+          MaterialPageRoute(
+              builder: (ctx) => ProductPage(
+                product: product,
+                liked: liked,
+                onFavoriteToggle: onFavoriteToggle,
+              ))),
       child: Column(
         children: [
-          AspectRatio(
-              aspectRatio: 6 / 8,
-              child: Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(product.imageUrl), fit: BoxFit.cover),
-                    borderRadius: BorderRadius.circular(15)),
-              )),
+          Stack(
+            children: [
+              AspectRatio(
+                  aspectRatio: 6 / 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: NetworkImage(product.imageUrl),
+                            fit: BoxFit.cover),
+                        borderRadius: BorderRadius.circular(15)),
+                  )),
+              Positioned(
+                  top: 3,
+                  right: 3,
+                  child: IconButton(
+                    onPressed: () => onFavoriteToggle(),
+                    icon: liked
+                        ? const Icon(Icons.favorite, color: Colors.red)
+                        : const Icon(Icons.favorite_border,
+                        color: Colors.white),
+                  ))
+            ],
+          ),
           Container(
               alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.fromLTRB(8, 5, 12, 0),
+              padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
               child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(
@@ -47,10 +74,18 @@ class ProductItem extends StatelessWidget {
                 textAlign: TextAlign.left),
           ),
           ElevatedButton(
-              onPressed: () => {Navigator.push(
-                  context, MaterialPageRoute(builder: (ctx) => ProductPage(product: product,)))},
+              onPressed: () => {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => ProductPage(
+                          onFavoriteToggle: onFavoriteToggle,
+                          liked: liked,
+                          product: product,
+                        )))
+              },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.blueGrey,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15))),
               child: const Row(

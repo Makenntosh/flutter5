@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter3/components/product_item.dart';
 import 'package:flutter3/models/product.dart';
 
-// Список товаров
 final List<Product> products = [
   Product(
     "1727088258",
@@ -41,16 +40,18 @@ final List<Product> products = [
   ),
 ];
 
-// Страница главного экрана
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class CatalogPage extends StatefulWidget {
+  final Function(Product) onFavoriteToggle;
+  final List<Product> favoriteProducts;
+
+  const CatalogPage(
+      {super.key, required this.onFavoriteToggle, required this.favoriteProducts});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _CatalogPageState createState() => _CatalogPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  // Диалог для добавления нового товара
+class _CatalogPageState extends State<CatalogPage> {
   void _showAddProductDialog() {
     final TextEditingController idController = TextEditingController();
     final TextEditingController titleController = TextEditingController();
@@ -141,7 +142,11 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSpacing: 20),
               itemCount: products.length,
               itemBuilder: (BuildContext ctx, index) {
-                return ProductItem(product: products[index]);
+                return ProductItem(
+                    product: products[index],
+                    liked: widget.favoriteProducts.contains(products[index]),
+                    onFavoriteToggle: () =>
+                        widget.onFavoriteToggle(products[index]));
               })),
       floatingActionButton: Stack(
         children: [
@@ -165,4 +170,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
